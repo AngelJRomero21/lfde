@@ -1,449 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Camera, 
-  Film, 
-  Tv, 
-  Video, 
-  Mic, 
-  User, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Download, 
-  Globe, 
-  Youtube, 
-  Instagram, 
-  ChevronDown,
-  ExternalLink,
-  Award,
-  Music,
-  Star,
-  Calendar,
-  Image as ImageIcon
-} from 'lucide-react';
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luis Fernández de Eribe - Web Oficial | Actor</title>
+    <meta name="description" content="Web oficial de Luis Fernández de Eribe. Actor español veterano, barítono e ingeniero. Conocido por La Casa de Papel, Almodóvar y Cine Español.">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
-// --- DATA & CONTENT ---
-
-const personalData = {
-  name: "Luis Fernández de Eribe",
-  title: "Actor | Barítono | Ingeniero",
-  location: "Madrid, España",
-  email: "deribe.urbana@gmail.com",
-  phone: "+34 639 303 540",
-  web: "deribeurbana.wixsite.com/fernandez-de-eribe",
-  blog: "http://www.luisfernandezdeeribeactor.blogspot.com",
-  imdb: "http://www.imdb.com/name/nm4766300/",
-  stats: {
-    age: "76 Años",
-    height: "1,75 m",
-    weight: "85 kg",
-    eyes: "Marrón",
-    hair: "Canoso",
-    jacket: "56",
-    pants: "48",
-    shirt: "44",
-    shoe: "41"
-  },
-  skills: [
-    "Carnet de Conducir (Coche y Moto)",
-    "Natación & Bicicleta",
-    "Ingeniero Químico",
-    "Máster Dirección Residencias",
-    "Canto: Barítono (Zarzuela)",
-    "Idiomas: Inglés, Árabe"
-  ]
-};
-
-const awards = [
-  { title: "Mejor Actor", festival: "Festival de Los Ángeles", work: "El Brindis (David Ferraro)" },
-  { title: "Mención Especial del Jurado", festival: "Festival de Tribeca (NY)", work: "Let's Break the Ice" },
-  { title: "Premiado", festival: "Festival de Cagliary 2010", work: "Todo está en la mente" },
-  { title: "Spot Premiado", festival: "Publicidad", work: "1 Mejor que 4 (Cerveza Fascinante)" }
-];
-
-const credits = {
-  cine: [
-    { title: "La Piel que Habito", director: "Pedro Almodóvar", role: "Secundario" },
-    { title: "Las Brujas de Zugarramurdi", director: "Álex de la Iglesia", role: "Secundario" },
-    { title: "Torrente 4", director: "Santiago Segura", role: "Secundario" },
-    { title: "The Cold Light of Day", director: "Mabrouk El Mechri", role: "Reparto (con Bruce Willis)" },
-    { title: "El Bueno, el Feo y el Malo", director: "Sergio Leone", role: "Soldado Casaca (Clásico)" },
-    { title: "Intruders", director: "Juan Carlos Fresnadillo", role: "Reparto" },
-    { title: "La Voz Dormida", director: "Benito Zambrano", role: "Reparto" },
-    { title: "Kamikaze", director: "Álex García", role: "Reparto" },
-    { title: "El Alacrán Enamorado", director: "Santiago Zannou", role: "Reparto" },
-    { title: "75 Días", director: "Marc Romero", role: "Forense" }
-  ],
-  tv: [
-    { title: "La Casa de Papel", net: "Netflix", role: "Episódico" },
-    { title: "Cuéntame cómo pasó", net: "TVE", role: "Varios Episódicos" },
-    { title: "La Que Se Avecina", net: "Telecinco", role: "Padre Mateo / Episódico" },
-    { title: "Águila Roja", net: "TVE", role: "Cura Hogueras" },
-    { title: "Aída", net: "Telecinco", role: "Episódico" },
-    { title: "Amar es para Siempre", net: "Antena 3", role: "Marchante de Arte / Jugador" },
-    { title: "Servir y Proteger", net: "TVE", role: "Paciente" },
-    { title: "El Secreto de Puente Viejo", net: "Antena 3", role: "Episódico" },
-    { title: "Sky Rojo", net: "Netflix", role: "Episódico" },
-    { title: "In From The Cold", net: "Netflix", role: "Episódico" }
-  ],
-  publicidad: [
-    { title: "IKEA", desc: "Muebles / Campaña Navidad", role: "Protagonista" },
-    { title: "McDonald's", desc: "Varios Spots", role: "Protagonista" },
-    { title: "Movistar", desc: "Campaña Reyes Magos / Ovejas", role: "Protagonista" },
-    { title: "Coca Cola Light", desc: "Maqueta", role: "Actor" },
-    { title: "Lotería Navidad", desc: "Spot Anual", role: "Actor" },
-    { title: "Mahou", desc: "Spot TV", role: "OVNI" },
-    { title: "Banco Popular", desc: "Spot Interno", role: "Actor" },
-    { title: "Burger King", desc: "Toros", role: "Actor" }
-  ],
-  music: [
-    { title: "Aitana", desc: "Las Babys", role: "Videoclip" },
-    { title: "Love of Lesbian", desc: "Si tú me dices Ben", role: "Videoclip" },
-    { title: "Funambulista", desc: "Diego Cantero", role: "Videoclip" },
-    { title: "Boikot", desc: "Varios", role: "Videoclip" },
-    { title: "Sober", desc: "Grupo Musical", role: "Videoclip" }
-  ]
-};
-
-// --- COMPONENTS ---
-
-const SectionTitle = ({ children, icon: Icon, align = "left" }) => (
-  <div className={`flex items-center gap-3 mb-10 ${align === 'center' ? 'justify-center' : ''}`}>
-    <div className="p-2 bg-gradient-to-br from-yellow-600 to-yellow-700 rounded-lg shadow-lg">
-      <Icon className="text-white w-6 h-6" />
-    </div>
-    <h2 className="text-3xl font-bold text-white uppercase tracking-wider">{children}</h2>
-  </div>
-);
-
-const CreditCard = ({ title, subtitle, role }) => (
-  <div className="group bg-neutral-800 p-5 rounded-lg border-l-4 border-neutral-700 hover:border-yellow-600 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-    <h3 className="font-bold text-lg text-white group-hover:text-yellow-500 transition-colors">{title}</h3>
-    <p className="text-neutral-400 text-sm mb-2">{subtitle}</p>
-    <div className="flex items-center gap-2">
-      <div className="w-1.5 h-1.5 rounded-full bg-yellow-600"></div>
-      <p className="text-neutral-300 text-sm italic">{role}</p>
-    </div>
-  </div>
-);
-
-const AwardCard = ({ title, festival, work }) => (
-  <div className="bg-gradient-to-br from-neutral-800 to-neutral-900 border border-neutral-700 p-6 rounded-xl flex flex-col items-center text-center relative overflow-hidden group">
-    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-      <Award size={80} />
-    </div>
-    <Star className="text-yellow-500 w-8 h-8 mb-4 fill-current" />
-    <h4 className="text-xl font-bold text-white mb-2">{title}</h4>
-    <p className="text-yellow-500 font-medium mb-1">{festival}</p>
-    <p className="text-neutral-400 text-sm italic">"{work}"</p>
-  </div>
-);
-
-const StatItem = ({ label, value }) => (
-  <div className="flex justify-between border-b border-neutral-700/50 py-3 hover:bg-neutral-800/50 px-2 rounded transition-colors">
-    <span className="text-neutral-400">{label}</span>
-    <span className="text-white font-medium">{value}</span>
-  </div>
-);
-
-export default function ActorPortfolio() {
-  const [activeTab, setActiveTab] = useState('cine');
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'cine': return credits.cine.map((item, idx) => <CreditCard key={idx} {...item} />);
-      case 'tv': return credits.tv.map((item, idx) => <CreditCard key={idx} subtitle={item.net} {...item} />);
-      case 'publicidad': return credits.publicidad.map((item, idx) => <CreditCard key={idx} subtitle={item.desc} {...item} />);
-      case 'music': return credits.music.map((item, idx) => <CreditCard key={idx} subtitle={item.desc} {...item} />);
-      default: return null;
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-neutral-900 font-sans text-neutral-200 selection:bg-yellow-600 selection:text-white">
-      
-      {/* SEO */}
-      <div className="hidden">
-        <h1>Luis Fernández de Eribe - Web Oficial</h1>
-        <p>Actor con más de 40 años de trayectoria. Barítono e Ingeniero. Premiado en Tribeca y Los Ángeles.</p>
-      </div>
-
-      {/* NAVIGATION */}
-      <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-neutral-900/95 backdrop-blur-sm shadow-xl py-3 border-b border-neutral-800' : 'bg-transparent py-6'}`}>
-        <div className="container mx-auto px-6 flex justify-between items-center">
-          <a href="#" className="flex flex-col leading-none">
-            <span className="text-2xl font-bold tracking-widest text-white">ERIBE</span>
-            <span className="text-[10px] tracking-[0.4em] text-yellow-500 uppercase">Actor</span>
-          </a>
-          
-          {/* Desktop Nav */}
-          <div className="hidden md:flex gap-8 text-sm font-bold tracking-wider">
-            {['Bio', 'Premios', 'Trayectoria', 'Prensa', 'Contacto'].map((item) => (
-              <a key={item} href={`#${item.toLowerCase()}`} className="text-neutral-400 hover:text-white hover:text-yellow-500 transition-colors py-2 border-b-2 border-transparent hover:border-yellow-600">
-                {item.toUpperCase()}
-              </a>
-            ))}
-          </div>
-
-          {/* Mobile Menu Toggle */}
-          <button className="md:hidden text-white" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-             <div className="space-y-2">
-                <span className="block w-8 h-0.5 bg-white"></span>
-                <span className="block w-8 h-0.5 bg-white"></span>
-                <span className="block w-8 h-0.5 bg-white"></span>
-             </div>
-          </button>
-        </div>
-      </nav>
-
-      {/* HERO SECTION */}
-      <header className="relative h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=2059&auto=format&fit=crop')] bg-cover bg-center opacity-20 filter grayscale mix-blend-overlay"></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-neutral-900/60 to-transparent"></div>
-        
-        <div className="relative z-10 text-center px-4 max-w-5xl mx-auto animate-fade-in-up">
-          <div className="inline-block px-4 py-1.5 border border-yellow-600/50 rounded-full bg-yellow-600/10 mb-6 backdrop-blur-sm">
-            <span className="text-yellow-500 text-xs md:text-sm font-bold tracking-widest uppercase">Web Oficial</span>
-          </div>
-          
-          <h1 className="text-5xl md:text-8xl font-bold text-white mb-4 tracking-tighter font-serif leading-tight">
-            LUIS FDEZ.<br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-yellow-200">DE ERIBE</span>
-          </h1>
-          
-          <p className="text-xl md:text-2xl text-neutral-300 max-w-2xl mx-auto font-light mb-10">
-            La solidez de la experiencia. La versatilidad del talento.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <a href="#contacto" className="px-8 py-4 bg-yellow-600 text-white font-bold hover:bg-yellow-700 transition-all rounded shadow-lg shadow-yellow-900/20 w-full sm:w-auto flex justify-center items-center gap-2">
-              <Mail size={18} /> Contratación
-            </a>
-            <a href="#trayectoria" className="px-8 py-4 border border-neutral-600 text-white font-bold hover:bg-white hover:text-neutral-900 transition-all rounded w-full sm:w-auto flex justify-center items-center gap-2 bg-neutral-900/50 backdrop-blur-sm">
-              <Film size={18} /> Ver Filmografía
-            </a>
-          </div>
-        </div>
-
-        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <ChevronDown className="text-neutral-500 w-8 h-8" />
-        </div>
-      </header>
-
-      {/* AWARDS SECTION (NEW) */}
-      <section id="premios" className="py-20 bg-neutral-900 relative">
-        <div className="container mx-auto px-6">
-          <SectionTitle icon={Award} align="center">Reconocimientos</SectionTitle>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {awards.map((award, idx) => (
-              <AwardCard key={idx} {...award} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* BIOGRAPHY SECTION */}
-      <section id="bio" className="py-20 bg-neutral-800">
-        <div className="container mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div className="relative">
-              {/* Photo Placeholder */}
-              <div className="aspect-[3/4] rounded-lg bg-neutral-700 relative overflow-hidden shadow-2xl">
-                 <div className="absolute inset-0 bg-neutral-800 flex items-center justify-center">
-                    <User size={64} className="text-neutral-600" />
-                    <span className="absolute bottom-10 text-neutral-500 text-sm">Retrato Actoral</span>
-                 </div>
-                 <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-yellow-600 rounded-full blur-3xl opacity-20"></div>
-              </div>
-              
-              {/* Stats Card Floating */}
-              <div className="absolute bottom-8 -right-4 lg:-right-12 bg-neutral-900 p-6 rounded-xl shadow-2xl border border-neutral-700 w-64 hidden md:block">
-                 <h4 className="text-yellow-500 font-bold mb-3 flex items-center gap-2"><ImageIcon size={16}/> Perfil Físico</h4>
-                 <div className="space-y-2 text-sm">
-                    <div className="flex justify-between"><span className="text-neutral-400">Altura</span> <span>{personalData.stats.height}</span></div>
-                    <div className="flex justify-between"><span className="text-neutral-400">Ojos</span> <span>{personalData.stats.eyes}</span></div>
-                    <div className="flex justify-between"><span className="text-neutral-400">Pelo</span> <span>{personalData.stats.hair}</span></div>
-                 </div>
-              </div>
-            </div>
-
-            <div>
-              <SectionTitle icon={User}>Biografía</SectionTitle>
-              <div className="prose prose-invert prose-lg">
-                <p className="text-2xl text-white font-serif italic mb-6">
-                  "Más de 70 años de vida y 40 de carrera artística avalan una trayectoria marcada por la disciplina y la pasión."
-                </p>
-                <p className="text-neutral-400 mb-6">
-                  Luis M. Fernández de Eribe (Bilbao, 1949) es un ejemplo de versatilidad. Ingeniero Químico de formación, encontró su verdadera vocación en las artes escénicas, combinando su rigor profesional con una sensibilidad artística única.
-                </p>
-                <p className="text-neutral-400 mb-6">
-                  Como <strong>actor</strong>, ha trabajado con directores de la talla de <strong>Pedro Almodóvar, Álex de la Iglesia y Benito Zambrano</strong>. Su presencia escénica lo ha convertido en un rostro habitual tanto en cine de culto (*El Bueno, el Feo y el Malo*) como en éxitos televisivos modernos (*La Casa de Papel*).
-                </p>
-                <p className="text-neutral-400 mb-8">
-                  Además de su faceta actoral, Luis es un destacado <strong>Barítono</strong>, intérprete de Zarzuela y miembro de la Coral Zaragoza, aportando una potente voz y dominio escénico a sus interpretaciones.
-                </p>
-                
-                <div className="flex flex-wrap gap-3">
-                  <span className="px-4 py-2 bg-neutral-700 rounded-full text-sm text-white hover:bg-yellow-600 transition-colors cursor-default">Ingeniero Químico</span>
-                  <span className="px-4 py-2 bg-neutral-700 rounded-full text-sm text-white hover:bg-yellow-600 transition-colors cursor-default">Barítono</span>
-                  <span className="px-4 py-2 bg-neutral-700 rounded-full text-sm text-white hover:bg-yellow-600 transition-colors cursor-default">Inglés & Árabe</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* PORTFOLIO TABS */}
-      <section id="trayectoria" className="py-20 bg-neutral-900">
-        <div className="container mx-auto px-6">
-            <div className="flex flex-col md:flex-row md:justify-between md:items-end mb-12 gap-6">
-                <div>
-                    <SectionTitle icon={Film}>Filmografía</SectionTitle>
-                    <p className="text-neutral-400 max-w-xl -mt-6">Una colección seleccionada de apariciones en cine, series de éxito internacional y campañas publicitarias memorables.</p>
-                </div>
-                
-                {/* Tabs */}
-                <div className="flex bg-neutral-800 p-1 rounded-lg overflow-x-auto">
-                    {['cine', 'tv', 'publicidad', 'music'].map(tab => (
-                        <button 
-                            key={tab}
-                            onClick={() => setActiveTab(tab)} 
-                            className={`px-6 py-2 rounded-md font-bold transition-all capitalize whitespace-nowrap ${activeTab === tab ? 'bg-yellow-600 text-white shadow' : 'text-neutral-400 hover:text-white'}`}
-                        >
-                            {tab === 'music' ? 'Videoclips' : tab}
-                        </button>
-                    ))}
-                </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-fade-in min-h-[400px]">
-                {renderContent()}
-            </div>
-            
-            <div className="mt-16 text-center border-t border-neutral-800 pt-10">
-                <a href={personalData.imdb} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-white bg-neutral-800 hover:bg-neutral-700 px-6 py-3 rounded-lg transition-colors border border-neutral-700">
-                    <Film size={20} className="text-yellow-500" /> Ver perfil completo en IMDb
-                </a>
-            </div>
-        </div>
-      </section>
-
-      {/* MEDIA & BLOG LINKS */}
-      <section id="prensa" className="py-20 bg-neutral-800">
-        <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-12">
-             
-             {/* Videobook Area */}
-             <div>
-                <SectionTitle icon={Video}>Videobook</SectionTitle>
-                <div className="aspect-video bg-black rounded-xl overflow-hidden shadow-2xl relative group">
-                    <img src="https://img.youtube.com/vi/-bRC78QoeYA/maxresdefault.jpg" alt="Videobook" className="w-full h-full object-cover opacity-80 group-hover:opacity-60 transition-opacity" />
-                    <a href="https://www.youtube.com/watch?v=-bRC78QoeYA" target="_blank" rel="noreferrer" className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
-                            <Youtube className="text-white fill-current" size={32} />
-                        </div>
-                    </a>
-                </div>
-                <div className="mt-6 flex justify-between items-center text-sm">
-                   <span className="text-neutral-400">Recopilación de escenas dramáticas y cómicas.</span>
-                   <a href="https://www.youtube.com/c/Luisfernandezdeeribe1949" className="text-yellow-500 hover:text-yellow-400 font-bold flex items-center gap-1">Ver Canal <ExternalLink size={14}/></a>
-                </div>
-             </div>
-
-             {/* Blog & Social Area */}
-             <div className="flex flex-col h-full">
-                <SectionTitle icon={Globe}>En la Red</SectionTitle>
-                <div className="flex-1 grid gap-4">
-                   <a href={personalData.blog} target="_blank" rel="noreferrer" className="bg-neutral-900 p-6 rounded-xl border border-neutral-700 hover:border-yellow-600 transition-colors group flex items-start gap-4">
-                      <div className="p-3 bg-neutral-800 rounded-lg group-hover:bg-yellow-600 transition-colors">
-                         <Globe size={24} className="text-white"/>
-                      </div>
-                      <div>
-                         <h4 className="text-white font-bold text-lg">Blog Personal</h4>
-                         <p className="text-neutral-400 text-sm mt-1">Reflexiones, novedades sobre rodajes y crónicas personales.</p>
-                      </div>
-                   </a>
-
-                   <div className="bg-neutral-900 p-6 rounded-xl border border-neutral-700">
-                      <h4 className="text-white font-bold mb-4 flex items-center gap-2"><Download size={18}/> Material para Directores</h4>
-                      <div className="grid grid-cols-2 gap-3">
-                         <button className="p-2 bg-neutral-800 hover:bg-neutral-700 rounded text-sm text-neutral-300 transition-colors text-left">Descargar CV (PDF)</button>
-                         <button className="p-2 bg-neutral-800 hover:bg-neutral-700 rounded text-sm text-neutral-300 transition-colors text-left">Descargar Fotos HQ</button>
-                      </div>
-                   </div>
-                </div>
-             </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* CONTACT FOOTER */}
-      <footer id="contacto" className="bg-neutral-950 pt-20 pb-10 border-t border-neutral-900">
-        <div className="container mx-auto px-6">
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10 mb-16">
-                
-                <div className="col-span-1 lg:col-span-2">
-                    <h2 className="text-3xl font-bold text-white mb-6">Luis Fdez. de Eribe</h2>
-                    <p className="text-neutral-400 max-w-sm mb-6">
-                        Disponible para proyectos nacionales e internacionales. Residencia en Madrid. Movilidad geográfica completa.
-                    </p>
-                    <div className="flex gap-4">
-                        <a href="#" className="p-2 bg-neutral-900 rounded-full text-neutral-400 hover:text-white hover:bg-blue-600 transition-colors"><Globe size={20}/></a>
-                        <a href="#" className="p-2 bg-neutral-900 rounded-full text-neutral-400 hover:text-white hover:bg-red-600 transition-colors"><Youtube size={20}/></a>
-                        <a href="#" className="p-2 bg-neutral-900 rounded-full text-neutral-400 hover:text-white hover:bg-pink-600 transition-colors"><Instagram size={20}/></a>
-                    </div>
-                </div>
-
-                <div>
-                    <h4 className="text-white font-bold mb-6 border-b border-neutral-800 pb-2">Contacto Directo</h4>
-                    <ul className="space-y-4">
-                        <li className="flex items-center gap-3 text-neutral-400">
-                            <Phone className="text-yellow-600" size={18} />
-                            <span>{personalData.phone}</span>
-                        </li>
-                        <li className="flex items-center gap-3 text-neutral-400">
-                            <Mail className="text-yellow-600" size={18} />
-                            <a href={`mailto:${personalData.email}`} className="hover:text-white transition-colors">{personalData.email}</a>
-                        </li>
-                        <li className="flex items-center gap-3 text-neutral-400">
-                            <MapPin className="text-yellow-600" size={18} />
-                            <span>{personalData.location}</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <div>
-                    <h4 className="text-white font-bold mb-6 border-b border-neutral-800 pb-2">Datos Rápidos</h4>
-                    <ul className="space-y-2 text-sm text-neutral-500">
-                        <li>Edad Aparente: 70-75 años</li>
-                        <li>Altura: 1.75m</li>
-                        <li>Carnet: A/B</li>
-                        <li>Idiomas: Español, Inglés, Árabe</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div className="border-t border-neutral-900 pt-8 text-center text-neutral-600 text-sm">
-                <p>&copy; {new Date().getFullYear()} Luis Fernández de Eribe. Todos los derechos reservados.</p>
-            </div>
-        </div>
-      </footer>
-      
-      <style>{`
-        .animate-fade-in-up { animation: fadeInUp 1s ease-out forwards; }
-        .animate-fade-in { animation: fadeIn 0.8s ease-out forwards; }
+    <!-- Custom Styles -->
+    <style>
         @keyframes fadeInUp {
             from { opacity: 0; transform: translate3d(0, 40px, 0); }
             to { opacity: 1; transform: translate3d(0, 0, 0); }
@@ -452,7 +22,597 @@ export default function ActorPortfolio() {
             from { opacity: 0; }
             to { opacity: 1; }
         }
-      `}</style>
+        .animate-fade-in-up {
+            animation: fadeInUp 1s ease-out forwards;
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        
+        /* Tab Transitions */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        .tab-content.active {
+            display: grid;
+        }
+
+        /* Nav Scroll Effect */
+        #main-nav.scrolled {
+            background-color: rgba(23, 23, 23, 0.95);
+            backdrop-filter: blur(4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(64, 64, 64, 0.5);
+        }
+
+        /* Text Gradients */
+        .text-gradient-gold {
+            background: linear-gradient(to right, #eab308, #fef08a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+
+    <!-- SEO: JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Luis Fernández de Eribe",
+      "alternateName": "Luis Fdez. de Eribe",
+      "jobTitle": ["Actor", "Barítono", "Ingeniero", "Modelo Publicitario"],
+      "image": "https://i.imgur.com/c0MXX9O.png",
+      "url": "https://eribe.cromstudio.com.ve/",
+      "nationality": "Spanish",
+      "birthDate": "1949-06-28",
+      "birthPlace": {
+        "@type": "Place",
+        "name": "Bilbao, España"
+      },
+      "description": "Actor español veterano con más de 40 años de trayectoria. Conocido por La Casa de Papel, Almodóvar y publicidad internacional.",
+      "sameAs": [
+        "http://www.imdb.com/name/nm4766300/",
+        "https://www.youtube.com/c/Luisfernandezdeeribe1949",
+        "http://www.luisfernandezdeeribeactor.blogspot.com"
+      ]
+    }
+    </script>
+</head>
+<body class="bg-neutral-900 font-sans text-neutral-200 selection:bg-yellow-600 selection:text-white">
+
+    <!-- SEO Hidden Content -->
+    <h1 class="sr-only">Luis Fernández de Eribe - Actor Español, Barítono e Ingeniero - Web Oficial</h1>
+    <div class="hidden">
+        <p>Página oficial de Luis Fernández de Eribe. Actor con residencia en Madrid disponible para cine, televisión y publicidad. Experiencia en series como La Casa de Papel y películas de Almodóvar.</p>
     </div>
-  );
-}
+
+    <!-- NAVIGATION -->
+    <nav id="main-nav" class="fixed w-full z-50 transition-all duration-300 py-6 bg-transparent">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <a href="#" class="flex flex-col leading-none group" title="Luis Fernández de Eribe Inicio">
+                <span class="text-2xl font-bold tracking-widest text-white group-hover:text-yellow-500 transition-colors">ERIBE</span>
+                <span class="text-[10px] tracking-[0.4em] text-yellow-500 uppercase">Actor</span>
+            </a>
+            
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center gap-8 text-sm font-bold tracking-wider">
+                <a href="#bio" class="text-neutral-400 hover:text-white hover:text-yellow-500 transition-colors py-2 border-b-2 border-transparent hover:border-yellow-600">BIO</a>
+                <a href="#premios" class="text-neutral-400 hover:text-white hover:text-yellow-500 transition-colors py-2 border-b-2 border-transparent hover:border-yellow-600">PREMIOS</a>
+                <a href="#trayectoria" class="text-neutral-400 hover:text-white hover:text-yellow-500 transition-colors py-2 border-b-2 border-transparent hover:border-yellow-600">TRAYECTORIA</a>
+                <a href="#galeria" class="text-neutral-400 hover:text-white hover:text-yellow-500 transition-colors py-2 border-b-2 border-transparent hover:border-yellow-600">GALERÍA</a>
+                <a href="#contacto" class="text-neutral-400 hover:text-white hover:text-yellow-500 transition-colors py-2 border-b-2 border-transparent hover:border-yellow-600">CONTACTO</a>
+                <a href="https://eribe.cromstudio.com.ve/portafolio/" target="_blank" class="px-4 py-2 border border-yellow-600 text-yellow-500 hover:bg-yellow-600 hover:text-white transition-all rounded text-xs flex items-center gap-2">
+                    PORTAFOLIO WEB <i data-lucide="external-link" class="w-3 h-3"></i>
+                </a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" class="md:hidden text-white focus:outline-none">
+                <i data-lucide="menu" class="w-8 h-8"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-neutral-900 absolute top-full left-0 w-full border-t border-neutral-800 p-6 flex-col gap-4 shadow-xl">
+            <a href="#bio" class="text-white font-bold block py-2">BIO</a>
+            <a href="#premios" class="text-white font-bold block py-2">PREMIOS</a>
+            <a href="#trayectoria" class="text-white font-bold block py-2">TRAYECTORIA</a>
+            <a href="#galeria" class="text-white font-bold block py-2">GALERÍA</a>
+            <a href="#contacto" class="text-white font-bold block py-2">CONTACTO</a>
+            <a href="https://eribe.cromstudio.com.ve/portafolio/" target="_blank" class="text-yellow-500 font-bold flex items-center gap-2 py-2">
+                PORTAFOLIO WEB <i data-lucide="external-link" class="w-4 h-4"></i>
+            </a>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header class="relative h-screen flex items-center justify-center overflow-hidden">
+        <!-- Background -->
+        <div class="absolute inset-0 bg-[url('https://i.imgur.com/pJr2qeM.png')] bg-cover bg-center bg-no-repeat opacity-40" role="img" aria-label="Fondo cinemático Luis Fernández de Eribe"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-neutral-900 via-neutral-900/60 to-transparent"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-neutral-900/80 to-transparent"></div>
+        
+        <div class="relative z-10 text-center px-4 max-w-5xl mx-auto animate-fade-in-up">
+            <div class="inline-block px-4 py-1.5 border border-yellow-600/50 rounded-full bg-yellow-600/10 mb-6 backdrop-blur-sm">
+                <span class="text-yellow-500 text-xs md:text-sm font-bold tracking-widest uppercase">Web Oficial</span>
+            </div>
+            
+            <h2 class="text-5xl md:text-8xl font-bold text-white mb-4 tracking-tighter font-serif leading-tight drop-shadow-2xl">
+                LUIS FDEZ.<br/>
+                <span class="text-gradient-gold">DE ERIBE</span>
+            </h2>
+            
+            <p class="text-xl md:text-2xl text-neutral-300 max-w-2xl mx-auto font-light mb-10 drop-shadow-md">
+                Actor Senior • Barítono • Ingeniero • Modelo
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <a href="#contacto" class="px-8 py-4 bg-yellow-600 text-white font-bold hover:bg-yellow-700 transition-all rounded shadow-lg shadow-yellow-900/20 w-full sm:w-auto flex justify-center items-center gap-2">
+                    <i data-lucide="mail" class="w-5 h-5"></i> Contratación
+                </a>
+                <a href="#trayectoria" class="px-8 py-4 border border-neutral-600 text-white font-bold hover:bg-white hover:text-neutral-900 transition-all rounded w-full sm:w-auto flex justify-center items-center gap-2 bg-neutral-900/50 backdrop-blur-sm">
+                    <i data-lucide="film" class="w-5 h-5"></i> Ver Filmografía
+                </a>
+            </div>
+        </div>
+
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <i data-lucide="chevron-down" class="text-neutral-500 w-8 h-8"></i>
+        </div>
+    </header>
+
+    <!-- AWARDS SECTION -->
+    <section id="premios" class="py-20 bg-neutral-900 relative">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col items-center mb-12">
+                <div class="p-2 bg-gradient-to-br from-yellow-600 to-yellow-700 rounded-lg shadow-lg mb-4">
+                    <i data-lucide="award" class="text-white w-6 h-6"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-white uppercase tracking-wider">Reconocimientos</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Award 1 -->
+                <div class="bg-gradient-to-br from-neutral-800 to-neutral-900 border border-neutral-700 p-6 rounded-xl flex flex-col items-center text-center relative overflow-hidden group hover:border-yellow-600/50 transition-colors">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <i data-lucide="award" class="w-20 h-20"></i>
+                    </div>
+                    <i data-lucide="star" class="text-yellow-500 w-8 h-8 mb-4 fill-current"></i>
+                    <h4 class="text-xl font-bold text-white mb-2">Mejor Actor</h4>
+                    <p class="text-yellow-500 font-medium mb-1">Festival de Los Ángeles</p>
+                    <p class="text-neutral-400 text-sm italic">"El Brindis (David Ferraro)"</p>
+                </div>
+                <!-- Award 2 -->
+                <div class="bg-gradient-to-br from-neutral-800 to-neutral-900 border border-neutral-700 p-6 rounded-xl flex flex-col items-center text-center relative overflow-hidden group hover:border-yellow-600/50 transition-colors">
+                     <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <i data-lucide="award" class="w-20 h-20"></i>
+                    </div>
+                    <i data-lucide="star" class="text-yellow-500 w-8 h-8 mb-4 fill-current"></i>
+                    <h4 class="text-xl font-bold text-white mb-2">Mención Especial</h4>
+                    <p class="text-yellow-500 font-medium mb-1">Festival de Tribeca (NY)</p>
+                    <p class="text-neutral-400 text-sm italic">"Let's Break the Ice"</p>
+                </div>
+                <!-- Award 3 -->
+                <div class="bg-gradient-to-br from-neutral-800 to-neutral-900 border border-neutral-700 p-6 rounded-xl flex flex-col items-center text-center relative overflow-hidden group hover:border-yellow-600/50 transition-colors">
+                     <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <i data-lucide="award" class="w-20 h-20"></i>
+                    </div>
+                    <i data-lucide="star" class="text-yellow-500 w-8 h-8 mb-4 fill-current"></i>
+                    <h4 class="text-xl font-bold text-white mb-2">Premiado</h4>
+                    <p class="text-yellow-500 font-medium mb-1">Festival de Cagliary 2010</p>
+                    <p class="text-neutral-400 text-sm italic">"Todo está en la mente"</p>
+                </div>
+                <!-- Award 4 -->
+                <div class="bg-gradient-to-br from-neutral-800 to-neutral-900 border border-neutral-700 p-6 rounded-xl flex flex-col items-center text-center relative overflow-hidden group hover:border-yellow-600/50 transition-colors">
+                     <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <i data-lucide="award" class="w-20 h-20"></i>
+                    </div>
+                    <i data-lucide="star" class="text-yellow-500 w-8 h-8 mb-4 fill-current"></i>
+                    <h4 class="text-xl font-bold text-white mb-2">Spot Premiado</h4>
+                    <p class="text-yellow-500 font-medium mb-1">Publicidad Internacional</p>
+                    <p class="text-neutral-400 text-sm italic">"1 Mejor que 4"</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BIOGRAPHY SECTION -->
+    <section id="bio" class="py-20 bg-neutral-800">
+        <div class="container mx-auto px-6">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div class="relative">
+                    <!-- Portrait Image -->
+                    <div class="aspect-[3/4] rounded-lg bg-neutral-700 relative overflow-hidden shadow-2xl group">
+                        <img src="https://i.imgur.com/c0MXX9O.png" alt="Luis Fernández de Eribe Retrato Actoral" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy">
+                        <div class="absolute inset-0 bg-gradient-to-t from-neutral-900/90 to-transparent opacity-60"></div>
+                        <span class="absolute bottom-10 left-6 text-white text-lg font-serif italic">"La interpretación es mi vida"</span>
+                    </div>
+                    
+                    <!-- Floating Stats Card -->
+                    <div class="absolute bottom-8 -right-4 lg:-right-12 bg-neutral-900 p-6 rounded-xl shadow-2xl border border-neutral-700 w-64 hidden md:block">
+                        <h4 class="text-yellow-500 font-bold mb-3 flex items-center gap-2">
+                            <i data-lucide="image" class="w-4 h-4"></i> Perfil Físico
+                        </h4>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between"><span class="text-neutral-400">Altura</span> <span>1,75 m</span></div>
+                            <div class="flex justify-between"><span class="text-neutral-400">Ojos</span> <span>Marrón</span></div>
+                            <div class="flex justify-between"><span class="text-neutral-400">Pelo</span> <span>Canoso</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex items-center gap-3 mb-8">
+                        <div class="p-2 bg-gradient-to-br from-yellow-600 to-yellow-700 rounded-lg shadow-lg">
+                            <i data-lucide="user" class="text-white w-6 h-6"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-white uppercase tracking-wider">Biografía Profesional</h2>
+                    </div>
+                    
+                    <div class="prose prose-invert prose-lg">
+                        <p class="text-2xl text-white font-serif italic mb-6">
+                            "Más de 70 años de vida y 40 de carrera artística avalan una trayectoria marcada por la disciplina y la pasión."
+                        </p>
+                        <p class="text-neutral-400 mb-6">
+                            <strong>Luis M. Fernández de Eribe</strong> (Bilbao, 1949) es un actor con residencia en <strong>Madrid</strong> que personifica la versatilidad. Ingeniero Químico de formación, encontró su verdadera vocación en las artes escénicas, combinando su rigor profesional con una sensibilidad artística única.
+                        </p>
+                        <p class="text-neutral-400 mb-6">
+                            Su perfil de <strong>actor senior</strong> le ha permitido trabajar con directores de la talla de <strong>Pedro Almodóvar</strong>, Álex de la Iglesia y Benito Zambrano. Su presencia escénica es reconocida tanto en el cine español de culto (*El Bueno, el Feo y el Malo*) como en series de éxito mundial en <strong>Netflix</strong> (*La Casa de Papel*, *Sky Rojo*).
+                        </p>
+                        <p class="text-neutral-400 mb-8">
+                            Además de su faceta en cine y televisión, Luis destaca como <strong>Barítono</strong>, intérprete de Zarzuela y miembro de la Coral Zaragoza, ofreciendo una potente voz y dominio escénico para producciones musicales y publicidad.
+                        </p>
+                        
+                        <div class="flex flex-wrap gap-3">
+                            <span class="px-4 py-2 bg-neutral-700 rounded-full text-sm text-white hover:bg-yellow-600 transition-colors cursor-default">Actor Madrid</span>
+                            <span class="px-4 py-2 bg-neutral-700 rounded-full text-sm text-white hover:bg-yellow-600 transition-colors cursor-default">Casting 2025</span>
+                            <span class="px-4 py-2 bg-neutral-700 rounded-full text-sm text-white hover:bg-yellow-600 transition-colors cursor-default">Idiomas: Inglés & Árabe</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FILMOGRAPHY TABS SECTION -->
+    <section id="trayectoria" class="py-20 bg-neutral-900">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row md:justify-between md:items-end mb-12 gap-6">
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-2 bg-gradient-to-br from-yellow-600 to-yellow-700 rounded-lg shadow-lg">
+                            <i data-lucide="film" class="text-white w-6 h-6"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-white uppercase tracking-wider">Filmografía Destacada</h2>
+                    </div>
+                    <p class="text-neutral-400 max-w-xl">Selección de trabajos en Cine Español, Series TV Internacionales y Publicidad.</p>
+                </div>
+                
+                <!-- Tabs Buttons -->
+                <div class="flex bg-neutral-800 p-1 rounded-lg overflow-x-auto">
+                    <button onclick="switchTab('cine')" id="tab-cine" class="px-6 py-2 rounded-md font-bold transition-all capitalize whitespace-nowrap bg-yellow-600 text-white shadow">Cine</button>
+                    <button onclick="switchTab('tv')" id="tab-tv" class="px-6 py-2 rounded-md font-bold transition-all capitalize whitespace-nowrap text-neutral-400 hover:text-white">Televisión</button>
+                    <button onclick="switchTab('publicidad')" id="tab-publicidad" class="px-6 py-2 rounded-md font-bold transition-all capitalize whitespace-nowrap text-neutral-400 hover:text-white">Publicidad</button>
+                    <button onclick="switchTab('music')" id="tab-music" class="px-6 py-2 rounded-md font-bold transition-all capitalize whitespace-nowrap text-neutral-400 hover:text-white">Videoclips</button>
+                </div>
+            </div>
+
+            <div class="min-h-[400px]">
+                <!-- CINE TAB -->
+                <div id="content-cine" class="tab-content active grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Credits (Static for SEO) -->
+                    <article class="group bg-neutral-800 p-5 rounded-lg border-l-4 border-neutral-700 hover:border-yellow-600 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+                        <h3 class="font-bold text-lg text-white group-hover:text-yellow-500 transition-colors">La Piel que Habito</h3>
+                        <p class="text-neutral-400 text-sm mb-2">Pedro Almodóvar</p>
+                        <p class="text-neutral-300 text-sm italic border-l-2 border-yellow-600 pl-2">Secundario</p>
+                    </article>
+                     <article class="group bg-neutral-800 p-5 rounded-lg border-l-4 border-neutral-700 hover:border-yellow-600 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+                        <h3 class="font-bold text-lg text-white group-hover:text-yellow-500 transition-colors">Las Brujas de Zugarramurdi</h3>
+                        <p class="text-neutral-400 text-sm mb-2">Álex de la Iglesia</p>
+                        <p class="text-neutral-300 text-sm italic border-l-2 border-yellow-600 pl-2">Secundario</p>
+                    </article>
+                     <article class="group bg-neutral-800 p-5 rounded-lg border-l-4 border-neutral-700 hover:border-yellow-600 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+                        <h3 class="font-bold text-lg text-white group-hover:text-yellow-500 transition-colors">Torrente 4</h3>
+                        <p class="text-neutral-400 text-sm mb-2">Santiago Segura</p>
+                        <p class="text-neutral-300 text-sm italic border-l-2 border-yellow-600 pl-2">Secundario</p>
+                    </article>
+                     <article class="group bg-neutral-800 p-5 rounded-lg border-l-4 border-neutral-700 hover:border-yellow-600 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+                        <h3 class="font-bold text-lg text-white group-hover:text-yellow-500 transition-colors">The Cold Light of Day</h3>
+                        <p class="text-neutral-400 text-sm mb-2">Mabrouk El Mechri</p>
+                        <p class="text-neutral-300 text-sm italic border-l-2 border-yellow-600 pl-2">Reparto (con Bruce Willis)</p>
+                    </article>
+                     <article class="group bg-neutral-800 p-5 rounded-lg border-l-4 border-neutral-700 hover:border-yellow-600 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+                        <h3 class="font-bold text-lg text-white group-hover:text-yellow-500 transition-colors">El Bueno, el Feo y el Malo</h3>
+                        <p class="text-neutral-400 text-sm mb-2">Sergio Leone</p>
+                        <p class="text-neutral-300 text-sm italic border-l-2 border-yellow-600 pl-2">Soldado Casaca</p>
+                    </article>
+                </div>
+
+                <!-- TV TAB -->
+                <div id="content-tv" class="tab-content grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <article class="group bg-neutral-800 p-5 rounded-lg border-l-4 border-neutral-700 hover:border-yellow-600 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+                        <h3 class="font-bold text-lg text-white group-hover:text-yellow-500 transition-colors">La Casa de Papel</h3>
+                        <p class="text-neutral-400 text-sm mb-2">Netflix</p>
+                        <p class="text-neutral-300 text-sm italic border-l-2 border-yellow-600 pl-2">Episódico</p>
+                    </article>
+                    <article class="group bg-neutral-800 p-5 rounded-lg border-l-4 border-neutral-700 hover:border-yellow-600 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+                        <h3 class="font-bold text-lg text-white group-hover:text-yellow-500 transition-colors">Cuéntame cómo pasó</h3>
+                        <p class="text-neutral-400 text-sm mb-2">TVE</p>
+                        <p class="text-neutral-300 text-sm italic border-l-2 border-yellow-600 pl-2">Varios Episódicos</p>
+                    </article>
+                     <article class="group bg-neutral-800 p-5 rounded-lg border-l-4 border-neutral-700 hover:border-yellow-600 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+                        <h3 class="font-bold text-lg text-white group-hover:text-yellow-500 transition-colors">Sky Rojo</h3>
+                        <p class="text-neutral-400 text-sm mb-2">Netflix</p>
+                        <p class="text-neutral-300 text-sm italic border-l-2 border-yellow-600 pl-2">Episódico</p>
+                    </article>
+                </div>
+
+                <!-- PUBLICIDAD TAB -->
+                <div id="content-publicidad" class="tab-content grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <article class="group bg-neutral-800 p-5 rounded-lg border-l-4 border-neutral-700 hover:border-yellow-600 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+                        <h3 class="font-bold text-lg text-white group-hover:text-yellow-500 transition-colors">IKEA</h3>
+                        <p class="text-neutral-400 text-sm mb-2">Campaña Navidad</p>
+                        <p class="text-neutral-300 text-sm italic border-l-2 border-yellow-600 pl-2">Protagonista</p>
+                    </article>
+                    <article class="group bg-neutral-800 p-5 rounded-lg border-l-4 border-neutral-700 hover:border-yellow-600 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+                        <h3 class="font-bold text-lg text-white group-hover:text-yellow-500 transition-colors">McDonald's</h3>
+                        <p class="text-neutral-400 text-sm mb-2">Varios Spots</p>
+                        <p class="text-neutral-300 text-sm italic border-l-2 border-yellow-600 pl-2">Protagonista</p>
+                    </article>
+                </div>
+
+                <!-- MUSIC TAB -->
+                <div id="content-music" class="tab-content grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <article class="group bg-neutral-800 p-5 rounded-lg border-l-4 border-neutral-700 hover:border-yellow-600 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+                        <h3 class="font-bold text-lg text-white group-hover:text-yellow-500 transition-colors">Las Babys</h3>
+                        <p class="text-neutral-400 text-sm mb-2">Aitana</p>
+                        <p class="text-neutral-300 text-sm italic border-l-2 border-yellow-600 pl-2">Videoclip</p>
+                    </article>
+                </div>
+            </div>
+            
+            <div class="mt-16 text-center border-t border-neutral-800 pt-10">
+                <a href="http://www.imdb.com/name/nm4766300/" target="_blank" class="inline-flex items-center gap-2 text-white bg-neutral-800 hover:bg-neutral-700 px-6 py-3 rounded-lg transition-colors border border-neutral-700">
+                    <i data-lucide="film" class="text-yellow-500 w-5 h-5"></i> Ver perfil completo en IMDb
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- GALLERY SECTION -->
+    <section id="galeria" class="py-20 bg-neutral-800">
+        <div class="container mx-auto px-6">
+            <div class="flex items-center gap-3 mb-10">
+                <div class="p-2 bg-gradient-to-br from-yellow-600 to-yellow-700 rounded-lg shadow-lg">
+                    <i data-lucide="image" class="text-white w-6 h-6"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-white uppercase tracking-wider">Galería Fotográfica</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-[300px]">
+                <!-- Featured Image -->
+                <div class="rounded-xl overflow-hidden relative group md:col-span-2 md:row-span-2">
+                    <img src="https://i.imgur.com/c0MXX9O.png" alt="Retrato Principal" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy">
+                    <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <i data-lucide="camera" class="text-white w-8 h-8"></i>
+                    </div>
+                </div>
+                <!-- Placeholder 1 -->
+                <div class="rounded-xl overflow-hidden relative group">
+                    <img src="https://images.unsplash.com/photo-1505686994434-e3cc5abf1330?q=80&w=2073&auto=format&fit=crop" alt="Escena dramática" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy">
+                    <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                         <i data-lucide="camera" class="text-white w-8 h-8"></i>
+                    </div>
+                </div>
+                <!-- Placeholder 2 -->
+                <div class="rounded-xl overflow-hidden relative group">
+                    <img src="https://images.unsplash.com/photo-1478720568477-152d9b164e63?q=80&w=2098&auto=format&fit=crop" alt="Casting shot" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy">
+                     <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                         <i data-lucide="camera" class="text-white w-8 h-8"></i>
+                    </div>
+                </div>
+                <!-- Placeholder 3 -->
+                <div class="rounded-xl overflow-hidden relative group md:col-span-2">
+                    <img src="https://images.unsplash.com/photo-1594909122845-11baa439b7bf?q=80&w=2070&auto=format&fit=crop" alt="Set de rodaje" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy">
+                     <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                         <i data-lucide="camera" class="text-white w-8 h-8"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MEDIA SECTION -->
+    <section id="prensa" class="py-20 bg-neutral-900">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-2 gap-12">
+                <!-- Videobook -->
+                <div>
+                    <div class="flex items-center gap-3 mb-8">
+                        <div class="p-2 bg-gradient-to-br from-yellow-600 to-yellow-700 rounded-lg shadow-lg">
+                            <i data-lucide="video" class="text-white w-6 h-6"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-white uppercase tracking-wider">Videobook Destacado</h2>
+                    </div>
+                    <div class="aspect-video bg-black rounded-xl overflow-hidden shadow-2xl relative group border border-neutral-800">
+                        <img src="https://img.youtube.com/vi/FEocR5xwl_c/maxresdefault.jpg" alt="Videobook 12 Meses" class="w-full h-full object-cover opacity-80 group-hover:opacity-60 transition-opacity">
+                        <a href="https://www.youtube.com/watch?v=FEocR5xwl_c" target="_blank" class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-20 h-20 bg-red-600/90 backdrop-blur rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg border-4 border-white/20">
+                                <i data-lucide="play-circle" class="text-white fill-current ml-1 w-10 h-10"></i>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="mt-6 flex justify-between items-center text-sm">
+                        <div class="flex flex-col">
+                            <span class="text-white font-bold text-lg">12 Meses</span>
+                            <span class="text-neutral-400">Muestra de interpretación reciente.</span>
+                        </div>
+                        <a href="https://www.youtube.com/c/Luisfernandezdeeribe1949" target="_blank" class="text-yellow-500 hover:text-yellow-400 font-bold flex items-center gap-1">
+                            Ver Canal <i data-lucide="external-link" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Blog & Social -->
+                <div class="flex flex-col h-full">
+                    <div class="flex items-center gap-3 mb-8">
+                        <div class="p-2 bg-gradient-to-br from-yellow-600 to-yellow-700 rounded-lg shadow-lg">
+                            <i data-lucide="globe" class="text-white w-6 h-6"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-white uppercase tracking-wider">Presencia en la Red</h2>
+                    </div>
+                    <div class="flex-1 grid gap-4">
+                        <a href="http://www.luisfernandezdeeribeactor.blogspot.com" target="_blank" class="bg-neutral-800 p-6 rounded-xl border border-neutral-700 hover:border-yellow-600 transition-colors group flex items-start gap-4">
+                            <div class="p-3 bg-neutral-900 rounded-lg group-hover:bg-yellow-600 transition-colors">
+                                <i data-lucide="globe" class="text-white w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-white font-bold text-lg">Blog Oficial</h4>
+                                <p class="text-neutral-400 text-sm mt-1">Reflexiones, novedades sobre rodajes y crónicas personales.</p>
+                            </div>
+                        </a>
+
+                         <!--
+                        <div class="bg-neutral-800 p-6 rounded-xl border border-neutral-700">
+                            <h4 class="text-white font-bold mb-4 flex items-center gap-2">
+                                <i data-lucide="download" class="w-5 h-5"></i> Material para Casting
+                            </h4>
+                            <div class="grid grid-cols-2 gap-3">
+                                <button class="p-3 bg-neutral-900 hover:bg-neutral-700 rounded text-sm text-neutral-300 transition-colors text-left flex flex-col gap-1">
+                                    <span class="font-bold text-white">Descargar CV</span>
+                                    <span class="text-xs opacity-50">PDF Actualizado</span>
+                                </button>
+                                <button class="p-3 bg-neutral-900 hover:bg-neutral-700 rounded text-sm text-neutral-300 transition-colors text-left flex flex-col gap-1">
+                                    <span class="font-bold text-white">Fotos HQ</span>
+                                    <span class="text-xs opacity-50">Archivo ZIP</span>
+                                </button>
+                            </div>
+                        </div>
+                        -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT FOOTER -->
+    <footer id="contacto" class="bg-neutral-950 pt-20 pb-10 border-t border-neutral-900">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-10 mb-16">
+                
+                <div class="col-span-1 lg:col-span-2">
+                    <h2 class="text-3xl font-bold text-white mb-6">Luis Fdez. de Eribe</h2>
+                    <p class="text-neutral-400 max-w-sm mb-6">
+                        Actor español disponible para proyectos nacionales e internacionales. Residencia habitual en Madrid. Movilidad geográfica completa.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="p-2 bg-neutral-900 rounded-full text-neutral-400 hover:text-white hover:bg-blue-600 transition-colors"><i data-lucide="globe" class="w-5 h-5"></i></a>
+                        <a href="#" class="p-2 bg-neutral-900 rounded-full text-neutral-400 hover:text-white hover:bg-red-600 transition-colors"><i data-lucide="youtube" class="w-5 h-5"></i></a>
+                        <a href="#" class="p-2 bg-neutral-900 rounded-full text-neutral-400 hover:text-white hover:bg-pink-600 transition-colors"><i data-lucide="instagram" class="w-5 h-5"></i></a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold mb-6 border-b border-neutral-800 pb-2">Contacto Directo</h4>
+                    <ul class="space-y-4">
+                        <li class="flex items-center gap-3 text-neutral-400">
+                            <i data-lucide="phone" class="text-yellow-600 w-5 h-5"></i>
+                            <span>+34 639 303 540</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-neutral-400">
+                            <i data-lucide="mail" class="text-yellow-600 w-5 h-5"></i>
+                            <a href="mailto:deribe.urbana@gmail.com" class="hover:text-white transition-colors">deribe.urbana@gmail.com</a>
+                        </li>
+                        <li class="flex items-center gap-3 text-neutral-400">
+                            <i data-lucide="map-pin" class="text-yellow-600 w-5 h-5"></i>
+                            <span>Madrid, España</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold mb-6 border-b border-neutral-800 pb-2">Datos Rápidos</h4>
+                    <ul class="space-y-2 text-sm text-neutral-500">
+                        <li><strong>Edad:</strong> 76 años</li>
+                        <li><strong>Altura:</strong> 1.75m</li>
+                        <li><strong>Carnet:</strong> A/B</li>
+                        <li><strong>Idiomas:</strong> Español, Inglés, Árabe</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-neutral-900 pt-8 text-center text-neutral-600 text-sm">
+                <p>&copy; <span id="year"></span> Luis Fernández de Eribe. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // Set Year
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Tab Logic
+        function switchTab(tabName) {
+            // Reset Buttons
+            document.querySelectorAll('#trayectoria button').forEach(btn => {
+                btn.classList.remove('bg-yellow-600', 'text-white', 'shadow');
+                btn.classList.add('text-neutral-400', 'hover:text-white');
+            });
+            
+            // Highlight Active Button
+            const activeBtn = document.getElementById(`tab-${tabName}`);
+            if(activeBtn) {
+                activeBtn.classList.remove('text-neutral-400', 'hover:text-white');
+                activeBtn.classList.add('bg-yellow-600', 'text-white', 'shadow');
+            }
+
+            // Show Content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+                content.style.display = 'none';
+            });
+            const content = document.getElementById(`content-${tabName}`);
+            if(content) {
+                content.style.display = 'grid';
+                setTimeout(() => content.classList.add('active'), 10);
+            }
+        }
+
+        // Sticky Nav Logic
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('main-nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // Mobile Menu Logic
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            mobileMenu.classList.toggle('flex');
+        });
+
+        // Close mobile menu when clicking link
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                mobileMenu.classList.remove('flex');
+            });
+        });
+
+        // Initialize default tab
+        switchTab('cine');
+    </script>
+</body>
+</html>
