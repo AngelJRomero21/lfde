@@ -1,0 +1,211 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  Camera, 
+  Film, 
+  Tv, 
+  Video, 
+  Mic, 
+  User, 
+  Mail, 
+  Phone, 
+  MapPin, 
+  Download, 
+  Globe, 
+  Youtube, 
+  Instagram, 
+  ChevronDown,
+  ExternalLink,
+  Award,
+  Music,
+  Star,
+  Calendar,
+  Image as ImageIcon
+} from 'lucide-react';
+
+// --- DATA & CONTENT ---
+
+const personalData = {
+  name: "Luis Fernández de Eribe",
+  title: "Actor | Barítono | Ingeniero",
+  location: "Madrid, España",
+  email: "deribe.urbana@gmail.com",
+  phone: "+34 639 303 540",
+  web: "deribeurbana.wixsite.com/fernandez-de-eribe",
+  blog: "http://www.luisfernandezdeeribeactor.blogspot.com",
+  imdb: "http://www.imdb.com/name/nm4766300/",
+  stats: {
+    age: "76 Años",
+    height: "1,75 m",
+    weight: "85 kg",
+    eyes: "Marrón",
+    hair: "Canoso",
+    jacket: "56",
+    pants: "48",
+    shirt: "44",
+    shoe: "41"
+  },
+  skills: [
+    "Carnet de Conducir (Coche y Moto)",
+    "Natación & Bicicleta",
+    "Ingeniero Químico",
+    "Máster Dirección Residencias",
+    "Canto: Barítono (Zarzuela)",
+    "Idiomas: Inglés, Árabe"
+  ]
+};
+
+const awards = [
+  { title: "Mejor Actor", festival: "Festival de Los Ángeles", work: "El Brindis (David Ferraro)" },
+  { title: "Mención Especial del Jurado", festival: "Festival de Tribeca (NY)", work: "Let's Break the Ice" },
+  { title: "Premiado", festival: "Festival de Cagliary 2010", work: "Todo está en la mente" },
+  { title: "Spot Premiado", festival: "Publicidad", work: "1 Mejor que 4 (Cerveza Fascinante)" }
+];
+
+const credits = {
+  cine: [
+    { title: "La Piel que Habito", director: "Pedro Almodóvar", role: "Secundario" },
+    { title: "Las Brujas de Zugarramurdi", director: "Álex de la Iglesia", role: "Secundario" },
+    { title: "Torrente 4", director: "Santiago Segura", role: "Secundario" },
+    { title: "The Cold Light of Day", director: "Mabrouk El Mechri", role: "Reparto (con Bruce Willis)" },
+    { title: "El Bueno, el Feo y el Malo", director: "Sergio Leone", role: "Soldado Casaca (Clásico)" },
+    { title: "Intruders", director: "Juan Carlos Fresnadillo", role: "Reparto" },
+    { title: "La Voz Dormida", director: "Benito Zambrano", role: "Reparto" },
+    { title: "Kamikaze", director: "Álex García", role: "Reparto" },
+    { title: "El Alacrán Enamorado", director: "Santiago Zannou", role: "Reparto" },
+    { title: "75 Días", director: "Marc Romero", role: "Forense" }
+  ],
+  tv: [
+    { title: "La Casa de Papel", net: "Netflix", role: "Episódico" },
+    { title: "Cuéntame cómo pasó", net: "TVE", role: "Varios Episódicos" },
+    { title: "La Que Se Avecina", net: "Telecinco", role: "Padre Mateo / Episódico" },
+    { title: "Águila Roja", net: "TVE", role: "Cura Hogueras" },
+    { title: "Aída", net: "Telecinco", role: "Episódico" },
+    { title: "Amar es para Siempre", net: "Antena 3", role: "Marchante de Arte / Jugador" },
+    { title: "Servir y Proteger", net: "TVE", role: "Paciente" },
+    { title: "El Secreto de Puente Viejo", net: "Antena 3", role: "Episódico" },
+    { title: "Sky Rojo", net: "Netflix", role: "Episódico" },
+    { title: "In From The Cold", net: "Netflix", role: "Episódico" }
+  ],
+  publicidad: [
+    { title: "IKEA", desc: "Muebles / Campaña Navidad", role: "Protagonista" },
+    { title: "McDonald's", desc: "Varios Spots", role: "Protagonista" },
+    { title: "Movistar", desc: "Campaña Reyes Magos / Ovejas", role: "Protagonista" },
+    { title: "Coca Cola Light", desc: "Maqueta", role: "Actor" },
+    { title: "Lotería Navidad", desc: "Spot Anual", role: "Actor" },
+    { title: "Mahou", desc: "Spot TV", role: "OVNI" },
+    { title: "Banco Popular", desc: "Spot Interno", role: "Actor" },
+    { title: "Burger King", desc: "Toros", role: "Actor" }
+  ],
+  music: [
+    { title: "Aitana", desc: "Las Babys", role: "Videoclip" },
+    { title: "Love of Lesbian", desc: "Si tú me dices Ben", role: "Videoclip" },
+    { title: "Funambulista", desc: "Diego Cantero", role: "Videoclip" },
+    { title: "Boikot", desc: "Varios", role: "Videoclip" },
+    { title: "Sober", desc: "Grupo Musical", role: "Videoclip" }
+  ]
+};
+
+// --- COMPONENTS ---
+
+const SectionTitle = ({ children, icon: Icon, align = "left" }) => (
+  <div className={`flex items-center gap-3 mb-10 ${align === 'center' ? 'justify-center' : ''}`}>
+    <div className="p-2 bg-gradient-to-br from-yellow-600 to-yellow-700 rounded-lg shadow-lg">
+      <Icon className="text-white w-6 h-6" />
+    </div>
+    <h2 className="text-3xl font-bold text-white uppercase tracking-wider">{children}</h2>
+  </div>
+);
+
+const CreditCard = ({ title, subtitle, role }) => (
+  <div className="group bg-neutral-800 p-5 rounded-lg border-l-4 border-neutral-700 hover:border-yellow-600 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+    <h3 className="font-bold text-lg text-white group-hover:text-yellow-500 transition-colors">{title}</h3>
+    <p className="text-neutral-400 text-sm mb-2">{subtitle}</p>
+    <div className="flex items-center gap-2">
+      <div className="w-1.5 h-1.5 rounded-full bg-yellow-600"></div>
+      <p className="text-neutral-300 text-sm italic">{role}</p>
+    </div>
+  </div>
+);
+
+const AwardCard = ({ title, festival, work }) => (
+  <div className="bg-gradient-to-br from-neutral-800 to-neutral-900 border border-neutral-700 p-6 rounded-xl flex flex-col items-center text-center relative overflow-hidden group">
+    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+      <Award size={80} />
+    </div>
+    <Star className="text-yellow-500 w-8 h-8 mb-4 fill-current" />
+    <h4 className="text-xl font-bold text-white mb-2">{title}</h4>
+    <p className="text-yellow-500 font-medium mb-1">{festival}</p>
+    <p className="text-neutral-400 text-sm italic">"{work}"</p>
+  </div>
+);
+
+const StatItem = ({ label, value }) => (
+  <div className="flex justify-between border-b border-neutral-700/50 py-3 hover:bg-neutral-800/50 px-2 rounded transition-colors">
+    <span className="text-neutral-400">{label}</span>
+    <span className="text-white font-medium">{value}</span>
+  </div>
+);
+
+export default function ActorPortfolio() {
+  const [activeTab, setActiveTab] = useState('cine');
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'cine': return credits.cine.map((item, idx) => <CreditCard key={idx} {...item} />);
+      case 'tv': return credits.tv.map((item, idx) => <CreditCard key={idx} subtitle={item.net} {...item} />);
+      case 'publicidad': return credits.publicidad.map((item, idx) => <CreditCard key={idx} subtitle={item.desc} {...item} />);
+      case 'music': return credits.music.map((item, idx) => <CreditCard key={idx} subtitle={item.desc} {...item} />);
+      default: return null;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-neutral-900 font-sans text-neutral-200 selection:bg-yellow-600 selection:text-white">
+      
+      {/* SEO */}
+      <div className="hidden">
+        <h1>Luis Fernández de Eribe - Web Oficial</h1>
+        <p>Actor con más de 40 años de trayectoria. Barítono e Ingeniero. Premiado en Tribeca y Los Ángeles.</p>
+      </div>
+
+      {/* NAVIGATION */}
+      <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-neutral-900/95 backdrop-blur-sm shadow-xl py-3 border-b border-neutral-800' : 'bg-transparent py-6'}`}>
+        <div className="container mx-auto px-6 flex justify-between items-center">
+          <a href="#" className="flex flex-col leading-none">
+            <span className="text-2xl font-bold tracking-widest text-white">ERIBE</span>
+            <span className="text-[10px] tracking-[0.4em] text-yellow-500 uppercase">Actor</span>
+          </a>
+          
+          {/* Desktop Nav */}
+          <div className="hidden md:flex gap-8 text-sm font-bold tracking-wider">
+            {['Bio', 'Premios', 'Trayectoria', 'Prensa', 'Contacto'].map((item) => (
+              <a key={item} href={`#${item.toLowerCase()}`} className="text-neutral-400 hover:text-white hover:text-yellow-500 transition-colors py-2 border-b-2 border-transparent hover:border-yellow-600">
+                {item.toUpperCase()}
+              </a>
+            ))}
+          </div>
+
+          {/* Mobile Menu Toggle */}
+          <button className="md:hidden text-white" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+             <div className="space-y-2">
+                <span className="block w-8 h-0.5 bg-white"></span>
+                <span className="block w-8 h-0.5 bg-white"></span>
+                <span className="block w-8 h-0.5 bg-white"></span>
+             </div>
+          </button>
+        </div>
+      </nav>
+
+      {/* HERO SECTION */}
+      <header className="relative h-screen flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 bg-[url('
